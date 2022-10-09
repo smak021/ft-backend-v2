@@ -1,9 +1,18 @@
+require('dotenv').config()
 const express = require('express')
-const app = express()
+const app = new express()
+const filmRouter = require('./src/routes/filmRouter')
+const trackRouter = require('./src/routes/trackRouter')
+const showRouter = require('./src/routes/showRouter')
+const mDataRouter = require('./src/routes/mDataRouter')
 
 const port =process.env.PORT || 8000
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+app.use('/api/films',filmRouter)
+app.use('/api/shows',showRouter)
+app.use('/api/mdata',mDataRouter)
+app.use('/api/locations',trackRouter)
 
 
 app.get('/',(req,res)=>{
