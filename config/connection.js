@@ -68,7 +68,8 @@ const trackSchema= new mongoose.Schema({
     loc_real_name:String,
     theatre_code:{
         type:String,
-        unique:true
+        unique:true,
+        required:true
     },
     source:String,
     offset:{

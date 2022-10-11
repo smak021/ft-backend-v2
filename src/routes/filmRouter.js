@@ -24,7 +24,7 @@ router.get('/getfilm/:filmid',(req,res)=>{
 })
 
 
-router.post('/addfilm/:filmid',(req,res)=>{
+router.put('/addfilm/:filmid',(req,res)=>{
     let filmid = req.params.filmid
     let data = req.body
     console.log(req.body.film_id);

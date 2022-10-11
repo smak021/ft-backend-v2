@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use('/api/films',filmRouter)
 app.use('/api/shows',showRouter)
-app.use('/api/mdata',mDataRouter)
+app.use('/api/data',mDataRouter)
 app.use('/api/locations',trackRouter)
 
 
