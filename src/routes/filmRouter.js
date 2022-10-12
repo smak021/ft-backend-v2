@@ -35,7 +35,7 @@ router.put('/addfilm/:filmid',(req,res)=>{
     else{
            filmData.findOneAndUpdate({film_id:filmid},data,{upsert:true,new:true},(err,doc)=>{
             if(err){
-            res.send(err);}
+            res.sendStatus(500);}
             else{
                 res.send(doc)
             }
