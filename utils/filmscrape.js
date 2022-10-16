@@ -1,6 +1,11 @@
 const cheerio = require('cheerio')
 const axios = require('axios')
+const https = require('https')
+const axiosThrottle = require('axios-request-throttle')
 const stringSimilarity = require('string-similarity')
+
+axios.defaults.httpsAgent = new https.Agent({keepAlive:true})
+axiosThrottle.use(axios,{requestsPerSecond:5})
 
 
 let ptm=()=>{
@@ -25,12 +30,13 @@ let ptm=()=>{
                         for(let itms of jsonData.props.pageProps.initialState.movies.currentlyRunningMovies[city].groupedMovies)
                         {
                             let fName = itms.label
+                            console.log("ptm", fName);
                             for(let lang of itms.languageFormatGroups)
                             {
                                 let filmLanguage = lang['lang']
                                 let ptmCode = lang['fmtGrpId']
-                                let film_data= axios.get('https://flicktrack.cyclic.app/api/films/getfilms').then(({data})=>{
-
+                                // console.log("getfilms");
+                                let film_data=  axios.get('https://flicktrack.cyclic.app/api/films/getfilms').then( ({data})=>{
                                 for(let itm of data)
                                 {
                                     let bmId = itm.film_id
@@ -44,8 +50,10 @@ let ptm=()=>{
                                             film_id:bmId,
                                             ptm_code:ptmCode
                                         }
-                                        let upUrl = 'https://flicktrack.cyclic.app/api/films/addfilm/'+bmId
-                                        axios.put(upUrl,JSON.stringify(payload),{headers:{'Content-type': 'application/json'}})
+                                // console.log("addfilms");
+
+                                            let upUrl = 'https://flicktrack.cyclic.app/api/films/addfilm/'+bmId
+                                            axios.put(upUrl,JSON.stringify(payload),{headers:{'Content-type': 'application/json'}})
                                     }
                                 }
                                 })
@@ -60,7 +68,7 @@ let ptm=()=>{
 
 
 
-let bms = async ()=>{
+let bms =  ()=>{
 
     json_data=['KOCH','KOZH','TRIV']
     const url = 'https://in.bookmyshow.com/pwa/api/uapi/movies'
@@ -69,15 +77,16 @@ let bms = async ()=>{
     for(let item of json_data)
     {
         payload='{"bmsId":"1.2572928712.1661954374374","regionCode":"'+item+'","isSuperstar":"N"}'
-        axios.post(url,payload,{headers:{'content-type':'application/json'}}).then(data=>{
+        axios.post(url,payload,{headers:{'content-type':'application/json'}}).then( data=>{
             let readData = data.data.nowShowing.arrEvents;
             for(let it1 of readData)
-            {
+            {                  
                 for(let it2 of it1.ChildEvents)
                 {
                     const filmName = it2.EventName;
+                    console.log("bm",filmName);
                     const filmId = it2.EventCode
-                    axios.get("https://in.bookmyshow.com/"+item+"/movies/"+filmName+"/"+filmId).then(({ data })=>{
+                    axios.get("https://in.bookmyshow.com/"+item+"/movies/"+filmName+"/"+filmId).then( ({ data })=>{
                         const filmUrl = it2.EventURL
                         const releaseDate = it2.EventDate
                         const imageUrl = it2.EventImageCode
@@ -136,8 +145,11 @@ let bms = async ()=>{
                             priority:0,
                             film_status:'active'
                         }
-                        let upUrl = 'https://flicktrack.cyclic.app/api/films/addfilm/'+filmId
-                        axios.put(upUrl,JSON.stringify(updata),{headers:{'Content-type': 'application/json'}})
+                            // console.log("Loop");
+                            // console.log("addbmsfilms");
+
+                            let upUrl = 'https://flicktrack.cyclic.app/api/films/addfilm/'+filmId
+                            axios.put(upUrl,JSON.stringify(updata),{headers:{'Content-type': 'application/json'}})
                     })
                 }
             }

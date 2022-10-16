@@ -2,19 +2,26 @@ const cheerio = require('cheerio')
 const axios = require('axios')
 
 
+setTimeout(() => {
+for (let i in [1,2,3,4])
+{
+    let today = new Date()
 
-
-let today = new Date()
+console.log("Hello",today);
 const yyyy = today.getFullYear();
 let mm = today.getMonth() + 1; // Months start at 0!
 let dd = today.getDate();
-
+console.log(today);
 if (dd < 10) dd = '0' + dd;
 if (mm < 10) mm = '0' + mm;
 
 const formattedToday = yyyy+ '' + mm + dd;
 console.log(formattedToday);
 console.log(today.toLocaleDateString('en-IN',{formatMatcher:'best fit'}));
+}
+}, 5000);
+
+
 
 
 // let string = '2022-10-21T14:00'

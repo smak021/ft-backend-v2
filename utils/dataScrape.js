@@ -1,8 +1,10 @@
 const cheerio = require('cheerio')
 const axios = require('axios')
-
+const axiosThrottle = require('axios-request-throttle')
 // Scrape shows seperatly then write and read main data using api
 // New efficient method recommended.
+
+
 
 // Objectives
 // Reduce bm and pm api calls, either by delaying call by using interval or fetch show data, respective to current time and show time. 
