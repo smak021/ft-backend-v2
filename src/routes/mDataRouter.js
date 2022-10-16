@@ -84,34 +84,68 @@ router.get('/getData/:filmid',(req,res)=>{
 router.get('/getTheatreData/:filmid',(req,res)=>{
 
     const filmid = req.params.filmid
+    const source = req.query.source
+    let cond = {}
+    if(source == 'ptm')
+    {
+        cond = {"theatre.source":"ptm"}
+    }
+    else if(source == 'bms')
+    {
+        cond = {"theatre.source":"bms"}
+
+    }
+    else{
+        cond = {}
+
+    }
 
     const pipeline = [
         {
-            $match:{film_id:filmid}
+            $lookup:{
+                    from: "tracks",       
+                    localField: "theatre_code",  
+                    foreignField: "theatre_code", 
+                    as: "theatre"         
+            }
         },
+        {
+            $match:{
+                $and:[
+
+                    {film_id:filmid},
+                    cond
+                ]
+        }},
         {
             $group:
             {
-                _id:"$theatre_location",
-                theatre_codes:{
-                $addToSet:"$theatre_code"
-                }
+                _id:{theatre_location:"$theatre_location"},
+                loc_real_name:{$first:"$theatre.loc_real_name"},
+                data:
+                    {$addToSet:{theatre_code:"$theatre_code",offset:"$theatre.offset",source:{$first:"$theatre.source"}}}
+                   
             }
         },
+        // {
+        //     $match:{data:{source:"ptm"}}
+        // },
+        {$unwind:"$loc_real_name"},
         {
             $project:{
                 _id:0,
                 location:"$_id",
-                theatre_codes:1,
+                loc_real_name:1,
+                data:1
             }
-        },
+        },    
         {
         $sort:{location:1}
         }
     ]
 
     mData.aggregate(pipeline).exec((err,data)=>{
-        res.json({"film":filmid,"data":data})
+        res.json(data)
     })
 
 })

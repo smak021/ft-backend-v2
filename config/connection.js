@@ -37,12 +37,14 @@ const showScema= new mongoose.Schema({
     show_time:String,
     ptm_count:{
         available:{type:String},
-        booked:{type:String},
+        price:{type:String},
         total:{type:String},
+        name:{type:String}
     },
+    source:String,
     show_date:String,
     theatre_code:String,
-    film_id:String,
+    film:String,
     last_modified:String
 });
 

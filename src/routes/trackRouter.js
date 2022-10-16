@@ -30,18 +30,19 @@ router.get('/getlocations/:id',(req,res)=>{
                 $group:
                 {
                     _id:"$track_location",
-                    theatre_codes:{
-                    $addToSet:"$theatre_code"
-                    },
-                    loc_real_name:{$first:"$loc_real_name"}
+                    // theatre_codes:{$addToSet:"$theatre_code"},
+                    loc_real_name:{$first:"$loc_real_name"},
+                    data:{$push:{theatre_code:"$theatre_code",offset:"$offset"}}
                 }
             },
             {
                 $project:{
                     _id:0,
                     location:"$_id",
-                    theatre_codes:1,
-                    loc_real_name:1
+                    // theatre_codes:{data:"$theatre_codes",offset:"$offset"},
+                    // theatre_codes:1
+                    data:1,
+                    loc_real_name:1,
                 }
             },
             {

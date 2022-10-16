@@ -10,6 +10,9 @@ router.get('/getShows',(req,res)=>{
     const theatreCode = req.query.theatreCode
     const date = req.query.date
     const film =req.query.filmId
+    const source = req.query.source
+    let cond={}
+    
     const yr =date.slice(0,4)
     const month = date.slice(4,6)
     const day = date.slice(6,8)
@@ -26,16 +29,32 @@ router.get('/getShows',(req,res)=>{
         else{
             condition = date
         }
-        query = showData.find({film_id:film,show_date:condition,theatre_code:theatreCode},{'_id':0}).then(final=>{
+
+        if(source == 'ptm'){
+            cond = {film:film,show_date:condition,theatre_code:theatreCode,source:'ptm'}
+        }
+        else if(source=='bms'){
+            cond = {film:film,show_date:condition,theatre_code:theatreCode,source:'bms'}
+        }
+        else{
+            cond = {film:film,show_date:condition,theatre_code:theatreCode}
+        }
+
+
+        query = showData.find(cond,{'_id':0}).then(final=>{
         res.json(final)
         })
     })
     
 })
-router.post('/addshow/:showid',(req,res)=>{
+router.post('/addshow',(req,res)=>{
     const data = req.body
-    const showId = req.params.showid
-    showData.findOneAndUpdate({show_id:showId},data,{upsert:true,new:true},(err,doc)=>{
+    const id = req.body.show_id
+    if(id)
+    {
+
+        // const showId = req.params.showid
+        showData.findOneAndUpdate({show_id:id},data,{upsert:true,new:true},(err,doc)=>{
         if(err){
             res.send(err)
         }
@@ -44,10 +63,18 @@ router.post('/addshow/:showid',(req,res)=>{
         }
     })
 
+    }
+    else{
+        res.send("Error: Wrong Input")
+    }
+    
+
 })
 
-// router.put('/addshows',(req,res)=>{
-
-// })
+router.put('/addshows',(req,res)=>{
+    const data = req.body
+    console.log(data.show_id);
+    res.json(data)
+})
 
 module.exports=router
