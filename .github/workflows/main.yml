@@ -16,4 +16,4 @@ jobs:
           node-version: '12.x'
       - run: npm install
       - name: Run script
-        run: node ./utils/filmScrape.js
+        run: node ./utils/filmscrape.js
