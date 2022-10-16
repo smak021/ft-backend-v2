@@ -79,10 +79,42 @@ router.get('/getData/:filmid',(req,res)=>{
 
    })
 
-   console.log();
 })
 
+router.get('/getTheatreData/:filmid',(req,res)=>{
 
+    const filmid = req.params.filmid
+
+    const pipeline = [
+        {
+            $match:{film_id:filmid}
+        },
+        {
+            $group:
+            {
+                _id:"$theatre_location",
+                theatre_codes:{
+                $addToSet:"$theatre_code"
+                }
+            }
+        },
+        {
+            $project:{
+                _id:0,
+                location:"$_id",
+                theatre_codes:1,
+            }
+        },
+        {
+        $sort:{location:1}
+        }
+    ]
+
+    mData.aggregate(pipeline).exec((err,data)=>{
+        res.json({"film":filmid,"data":data})
+    })
+
+})
 
 
 router.get('/topfive',(req,res)=>{
@@ -133,6 +165,8 @@ router.put('/addData/:filmid/:theatreCode/:date',(req,res)=>{
         }
     })
 })
+
+
 
 
 let topfivepipeline=(condition)=>{
