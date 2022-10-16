@@ -5,9 +5,10 @@ const filmRouter = require('./src/routes/filmRouter')
 const trackRouter = require('./src/routes/trackRouter')
 const showRouter = require('./src/routes/showRouter')
 const mDataRouter = require('./src/routes/mDataRouter')
-
+const cors = require('cors')
 
 const port =process.env.PORT || 8000
+app.use(cors())
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use('/api/films',filmRouter)
