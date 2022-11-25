@@ -5,7 +5,7 @@ const axiosThrottle = require('axios-request-throttle')
 const stringSimilarity = require('string-similarity')
 
 axios.defaults.httpsAgent = new https.Agent({keepAlive:true})
-axiosThrottle.use(axios,{requestsPerSecond:5})
+axiosThrottle.use(axios,{requestsPerSecond:3})
 
 
 let ptm=()=>{
@@ -78,6 +78,9 @@ let bms =  ()=>{
     {
         payload='{"bmsId":"1.2572928712.1661954374374","regionCode":"'+item+'","isSuperstar":"N"}'
         axios.post(url,payload,{headers:{'content-type':'application/json'}}).then( data=>{
+
+        if(data && data.data && data.data.nowShowing && data.data.nowShowing.arrEvents)
+        {
             let readData = data.data.nowShowing.arrEvents;
             for(let it1 of readData)
             {                  
@@ -116,7 +119,11 @@ let bms =  ()=>{
                             let crew_p = product.lastChild.lastChild.lastChild.childNodes.map(itt=>{
                                 
                                 let crew =   itt.childNodes.map(itt1=>{
-                                    return $(itt1).text()
+                                    el = $(itt1)
+                                   
+                                    if(!(el.length === 0 || el.prop('tagName') === 'DIV')) 
+                                    return el.text()
+                                    // return $(itt1).text()
                                 })
                                 return [crew[1],crew[2]]
                             })
@@ -143,7 +150,6 @@ let bms =  ()=>{
                             cast_n_crew:castNCrew,
                             highlight:0,
                             priority:0,
-                            film_status:'active'
                         }
                             // console.log("Loop");
                             // console.log("addbmsfilms");
@@ -153,6 +159,9 @@ let bms =  ()=>{
                     })
                 }
             }
+
+        }
+
         }).catch((err=>{
             console.log(err);
         }))
